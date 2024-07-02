@@ -1,6 +1,6 @@
 {
-    "name": "My Web App",
-    "short_name": "WebApp",
+    "name": "My HelpDesk App",
+    "short_name": "HelpDeskApp",
     "icons": [
       {
         "src": "/helpdeskapp/icons/icon-192.png",
