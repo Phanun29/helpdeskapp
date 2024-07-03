@@ -1,6 +1,6 @@
 {
-    "name": "My HelpDesk App",
-    "short_name": "HelpDeskApp",
+    "name": "helpdeskapp",
+    "short_name": "helpdeskapp",
     "icons": [
       {
         "src": "/helpdeskapp/icons/icon-192.png",
