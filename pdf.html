@@ -43,18 +43,15 @@
     </table>
 
     <button onclick="exportToPDF()">Export to PDF</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="scripts/app.js"></script>
     <script>
         function exportToPDF() {
-            // Create new jsPDF instance
-            const {
-                jsPDF
-            } = window.jspdf;
-            const doc = new jsPDF({
-                orientation: 'landscape'
-            });
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape' });
 
-            // Include a Khmer font (Nokora) from Google Fonts
+            // Include and register the Khmer font
             var fontUrl = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@100..900&display=swap';
             var head = document.getElementsByTagName('head')[0];
             var link = document.createElement('link');
@@ -63,37 +60,42 @@
             link.href = fontUrl;
             head.appendChild(link);
 
-            // Modify the table to exclude certain columns based on the export-ignore class
-            const filteredHtml = $('#example1').clone().find('.export-ignore').remove().end()[0];
+            // Wait until font is loaded
+            document.fonts.ready.then(() => {
+                // Modify the table to exclude certain columns based on the export-ignore class
+                const filteredHtml = $('#example1').clone().find('.export-ignore').remove().end()[0];
 
-            // Use autoTable to export modified HTML table to PDF
-            doc.autoTable({
-                html: filteredHtml,
-                startY: 20,
-                headStyles: {
-                    fillColor: [22, 160, 133],
-                    textColor: [255, 255, 255],
-                    fontStyle: 'bold',
-                    fontSize: 6,
-                    halign: 'center'
-                },
-                bodyStyles: {
-                    fillColor: [238, 238, 238],
-                    textColor: [0, 0, 0],
-                    fontSize: 6,
-                    halign: 'center'
-                },
-                alternateRowStyles: {
-                    fillColor: [255, 255, 255]
-                },
-                margin: {
-                    top: 30
-                },
-                theme: 'grid'
+                // Use autoTable to export modified HTML table to PDF
+                doc.autoTable({
+                    html: filteredHtml,
+                    startY: 20,
+                    headStyles: {
+                        fillColor: [22, 160, 133],
+                        textColor: [255, 255, 255],
+                        fontStyle: 'bold',
+                        fontSize: 6,
+                        halign: 'center',
+                        font: "Noto Sans Khmer"
+                    },
+                    bodyStyles: {
+                        fillColor: [238, 238, 238],
+                        textColor: [0, 0, 0],
+                        fontSize: 6,
+                        halign: 'center',
+                        font: "Noto Sans Khmer"
+                    },
+                    alternateRowStyles: {
+                        fillColor: [255, 255, 255]
+                    },
+                    margin: {
+                        top: 30
+                    },
+                    theme: 'grid'
+                });
+
+                // Save PDF
+                doc.save("ticket.pdf");
             });
-
-            // Save PDF
-            doc.save("ticket.pdf");
         }
     </script>
 </body>
