@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Export with Khmer Font</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/icon-512.png">
+    <style>
+        .export-ignore {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="example1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th class="export-ignore">Age</th>
+                <th>Country</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ចន្ទ</td>
+                <td class="export-ignore">25</td>
+                <td>កម្ពុជា</td>
+            </tr>
+            <tr>
+                <td>សុវណ្ណ</td>
+                <td class="export-ignore">30</td>
+                <td>កម្ពុជា</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button onclick="exportToPDF()">Export to PDF</button>
+    <script src="scripts/app.js"></script>
+    <script>
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'landscape'
+            });
+
+            // Base64 string of the Nokora Khmer font
+            const khmerFont = 'data:font/truetype;charset=utf-8;base64,...'; // replace with the actual base64 string
+
+            // Add the font to jsPDF
+            doc.addFileToVFS('Nokora.ttf', khmerFont);
+            doc.addFont('Nokora.ttf', 'Nokora', 'normal');
+            doc.setFont('Nokora');
+
+            // Modify the table to exclude certain columns based on the export-ignore class
+            const filteredHtml = document.getElementById('example1').cloneNode(true);
+            const ignoreElements = filteredHtml.getElementsByClassName('export-ignore');
+            while (ignoreElements.length > 0) {
+                ignoreElements[0].parentNode.removeChild(ignoreElements[0]);
+            }
+
+            // Use autoTable to export modified HTML table to PDF
+            doc.autoTable({
+                html: filteredHtml,
+                startY: 10,
+                headStyles: {
+                    fillColor: [22, 160, 133],
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    fontSize: 6,
+                    halign: 'center'
+                },
+                bodyStyles: {
+                    fillColor: [238, 238, 238],
+                    textColor: [0, 0, 0],
+                    fontSize: 6,
+                    halign: 'center'
+                },
+                alternateRowStyles: {
+                    fillColor: [255, 255, 255]
+                },
+                margin: {
+                    top: 10
+                },
+                theme: 'grid',
+                didDrawCell: (data) => {
+                    doc.setFont('Nokora'); // Ensure the Khmer font is set for each cell
+                }
+            });
+
+            // Save PDF
+            doc.save("ticket.pdf");
+        }
+    </script>
+</body>
+
+</html>
