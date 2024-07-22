@@ -18,6 +18,8 @@
 </head>
 
 <body>
+    <a href="index.html">index</a>
+    <a href="pdf.html">pdf</a>
     <table id="example1">
         <thead>
             <tr>
@@ -44,30 +46,30 @@
     <script src="scripts/app.js"></script>
     <script>
         function exportToPDF() {
-            const { jsPDF } = window.jspdf;
+            // Create new jsPDF instance
+            const {
+                jsPDF
+            } = window.jspdf;
             const doc = new jsPDF({
                 orientation: 'landscape'
             });
 
-            // Base64 string of the Nokora Khmer font
-            const khmerFont = 'data:font/truetype;charset=utf-8;base64,...'; // replace with the actual base64 string
-
-            // Add the font to jsPDF
-            doc.addFileToVFS('Nokora.ttf', khmerFont);
-            doc.addFont('Nokora.ttf', 'Nokora', 'normal');
-            doc.setFont('Nokora');
+            // Include a Khmer font (Nokora) from Google Fonts
+            var fontUrl = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@100..900&display=swap';
+            var head = document.getElementsByTagName('head')[0];
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = fontUrl;
+            head.appendChild(link);
 
             // Modify the table to exclude certain columns based on the export-ignore class
-            const filteredHtml = document.getElementById('example1').cloneNode(true);
-            const ignoreElements = filteredHtml.getElementsByClassName('export-ignore');
-            while (ignoreElements.length > 0) {
-                ignoreElements[0].parentNode.removeChild(ignoreElements[0]);
-            }
+            const filteredHtml = $('#example1').clone().find('.export-ignore').remove().end()[0];
 
             // Use autoTable to export modified HTML table to PDF
             doc.autoTable({
                 html: filteredHtml,
-                startY: 10,
+                startY: 20,
                 headStyles: {
                     fillColor: [22, 160, 133],
                     textColor: [255, 255, 255],
@@ -85,12 +87,9 @@
                     fillColor: [255, 255, 255]
                 },
                 margin: {
-                    top: 10
+                    top: 30
                 },
-                theme: 'grid',
-                didDrawCell: (data) => {
-                    doc.setFont('Nokora'); // Ensure the Khmer font is set for each cell
-                }
+                theme: 'grid'
             });
 
             // Save PDF
